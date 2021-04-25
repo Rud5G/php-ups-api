@@ -3,10 +3,10 @@
 namespace Ups\Tests;
 
 use Exception;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Ups;
 
-class QuantumViewTest extends PHPUnit_Framework_TestCase
+class QuantumViewTest extends TestCase
 {
     public function testCreateRequest()
     {
@@ -48,7 +48,7 @@ class QuantumViewTest extends PHPUnit_Framework_TestCase
         $this->assertObjectHasAttribute('Type', $events->offsetGet(0));
 
         // Test bookmarks
-        $this->assertInternalType('bool', $quantumView->hasBookmark());
+        $this->assertTrue(\is_bool($quantumView->hasBookmark()));
     }
 
     public function testSubscriptionContext()

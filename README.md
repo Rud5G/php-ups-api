@@ -1,6 +1,6 @@
 # ![PHP UPS API](https://rawgit.com/gabrielbull/php-ups-api/develop/php-ups-api-logo.svg "PHP UPS API")
 
-[![Build Status](https://api.travis-ci.org/gabrielbull/php-ups-api.svg?branch=master)](https://travis-ci.org/gabrielbull/php-ups-api)
+![CI](https://github.com/gabrielbull/php-ups-api/workflows/CI/badge.svg?branch=master)
 [![StyleCI](https://styleci.io/repos/7774788/shield)](https://styleci.io/repos/7774788)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/gabrielbull/php-ups-api/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/gabrielbull/php-ups-api/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/gabrielbull/php-ups-api/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/gabrielbull/php-ups-api/?branch=master)
@@ -8,10 +8,9 @@
 [![Latest Stable Version](http://img.shields.io/packagist/v/gabrielbull/ups-api.svg?style=flat)](https://packagist.org/packages/gabrielbull/ups-api)
 [![Total Downloads](https://img.shields.io/packagist/dt/gabrielbull/ups-api.svg?style=flat)](https://packagist.org/packages/gabrielbull/ups-api)
 [![License](https://img.shields.io/packagist/l/gabrielbull/ups-api.svg?style=flat)](https://packagist.org/packages/gabrielbull/ups-api)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/22e29343-ee01-4cd1-8796-c19152c3c195/mini.png)](https://insight.sensiolabs.com/projects/22e29343-ee01-4cd1-8796-c19152c3c195)
 [![Join the chat at https://gitter.im/gabrielbull/php-ups-api](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/gabrielbull/php-ups-api?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-This library is aimed at wrapping all the UPS API into a simple to use PHP Library. It currently covers the Quantum View®,
+This library wrap all the UPS API into a simple to use PHP Library. It currently covers the Quantum View®,
 Tracking API, Shipping API, Rating API and Time in Transit API. Feel free to contribute.
 
 ## Table Of Content
@@ -33,25 +32,28 @@ Tracking API, Shipping API, Rating API and Time in Transit API. Feel free to con
 7. [Rate Class](#rate-class)
     * [Example](#rate-class-example)
     * [Parameters](#rate-class-parameters)
-8. [TimeInTransit Class](#timeintransit-class)
+8. [RateTimeInTransit Class](#ratetimeintransit-class)
+    * [Example](#ratetimeintransit-class-example)
+    * [Parameters](#ratetimeintransit-class-parameters)
+9. [TimeInTransit Class](#timeintransit-class)
     * [Example](#timeintransit-class-example)
     * [Parameters](#timeintransit-class-parameters)
-9. [Locator Class](#locator-class)
+10. [Locator Class](#locator-class)
     * [Example](#locator-class-example)
     * [Parameters](#locator-class-parameters)
-10. [Tradeability Class](#tradeability-class)
+11. [Tradeability Class](#tradeability-class)
     * [Example](#tradeability-class-example)
     * [Parameters](#tradeability-class-parameters)
-11. [Shipping Class](#shipping-class)
+12. [Shipping Class](#shipping-class)
     * [Example](#shipping-class-example)
     * [Parameters](#shipping-class-parameters)
-12. [Logging](#logging)
-13. [License](#license-section)
+13. [Logging](#logging)
+14. [License](#license-section)
 
 <a name="requirements"></a>
 ## Requirements
 
-This library uses PHP 5.5+.
+This library uses PHP 7.1+.
 
 To use the UPS API, you have to [request an access key from UPS](https://www.ups.com/upsdeveloperkit). For every request,
 you will have to provide the Access Key, your UPS User ID and Password.
@@ -62,8 +64,8 @@ you will have to provide the Access Key, your UPS User ID and Password.
 It is recommended that you install the PHP UPS API library [through composer](http://getcomposer.org/). To do so,
 run the Composer command to install the latest stable version of PHP UPS API:
 
-```shell
-composer require gabrielbull/ups-api
+```bash
+$ composer require gabrielbull/ups-api
 ```
 
 If not using composer, you must also include these libraries: [Guzzle](https://github.com/guzzle/guzzle), [Guzzle Promises](https://github.com/guzzle/promises), [Guzzle PSR7] (https://github.com/guzzle/psr7), [PHP-Fig PSR Log](https://github.com/php-fig/log), and [PHP-Fig HTTP Message](https://github.com/php-fig/http-message).
@@ -76,7 +78,7 @@ The Address Validation Class allow you to validate an address at street level. S
 Note: UPS has two Address Validations. This is Street Level option, which includes all option
 of the normal Address Validation class and adds street level validation.
 
-Not all countries are supported, see UPS documentation. Currently US & Puerto Rico are supported.
+Currently, only US & Puerto Rico are supported.
 
 <a name="addressvalidation-class-example"></a>
 ### Example
@@ -112,7 +114,6 @@ determine the outcome. Continuing the example from above, returning an `AddressV
 you to be a bit more specific with how you handle the various outcomes:
 
 ```PHP
-
 if ($response->noCandidates()) {
     //Do something clever and helpful to let the use know the address is invalid
 }
@@ -142,11 +143,11 @@ Address Validation parameters are:
 <a name="simple-addressvalidation-class"></a>
 ## Simple Address Validation Class 
 
-The Address Validation Class allow you to validate less extensive as the previous class, but it's supported in more countries. It returns a quality score of the supplied address and provides alternatives.
+The Simple Address Validation Class allow you to validate less extensive as the previous class. It returns a quality score of the supplied address and provides alternatives.
 
-Note: UPS has two Address Validations. This is supported in more countries, but offers less functionality.
+Note: UPS has two Address Validations. This is the Simple option. 
 
-Not all countries are supported, see UPS documentation.
+Currently, only US & Puerto Rico are supported.
 
 <a name="simple-addressvalidation-class-example"></a>
 ### Example
@@ -160,10 +161,10 @@ $address->setPostalCode('10000');
 
 $av = new \Ups\SimpleAddressValidation($accessKey, $userId, $password);
 try {
- $response = $av->validate($address);
- var_dump($response);
+    $response = $av->validate($address);
+    var_dump($response);
 } catch (Exception $e) {
- var_dump($e);
+    var_dump($e);
 }
 ```
 
@@ -365,6 +366,82 @@ try {
 
 This Rate class is not finished yet! Parameter should be added when it will be finished.
 
+<a name="ratetimeinstransit-class"></a>
+## RateTimeInTransit Class
+
+The RateTimeInTransit Class allow you to get shipment rates like the Rate Class, but the response will also include 
+TimeInTransit data.
+
+<a name="ratetimeintransit-class-example"></a>
+### Example
+
+```php
+$rate = new Ups\RateTimeInTransit(
+	$accessKey,
+	$userId,
+	$password
+);
+
+try {
+    $shipment = new \Ups\Entity\Shipment();
+
+    $shipperAddress = $shipment->getShipper()->getAddress();
+    $shipperAddress->setPostalCode('99205');
+
+    $address = new \Ups\Entity\Address();
+    $address->setPostalCode('99205');
+    $shipFrom = new \Ups\Entity\ShipFrom();
+    $shipFrom->setAddress($address);
+
+    $shipment->setShipFrom($shipFrom);
+
+    $shipTo = $shipment->getShipTo();
+    $shipTo->setCompanyName('Test Ship To');
+    $shipToAddress = $shipTo->getAddress();
+    $shipToAddress->setPostalCode('99205');
+
+    $package = new \Ups\Entity\Package();
+    $package->getPackagingType()->setCode(\Ups\Entity\PackagingType::PT_PACKAGE);
+    $package->getPackageWeight()->setWeight(10);
+    
+    // if you need this (depends of the shipper country)
+    $weightUnit = new \Ups\Entity\UnitOfMeasurement;
+    $weightUnit->setCode(\Ups\Entity\UnitOfMeasurement::UOM_KGS);
+    $package->getPackageWeight()->setUnitOfMeasurement($weightUnit);
+
+    $dimensions = new \Ups\Entity\Dimensions();
+    $dimensions->setHeight(10);
+    $dimensions->setWidth(10);
+    $dimensions->setLength(10);
+
+    $unit = new \Ups\Entity\UnitOfMeasurement;
+    $unit->setCode(\Ups\Entity\UnitOfMeasurement::UOM_IN);
+
+    $dimensions->setUnitOfMeasurement($unit);
+    $package->setDimensions($dimensions);
+
+    $shipment->addPackage($package);
+
+    $deliveryTimeInformation = new \Ups\Entity\DeliveryTimeInformation();
+    $deliveryTimeInformation->setPackageBillType(\Ups\Entity\DeliveryTimeInformation::PBT_NON_DOCUMENT);
+    
+    $pickup = new \Ups\Entity\Pickup();
+    $pickup->setDate("20170520");
+    $pickup->setTime("160000");
+    $shipment->setDeliveryTimeInformation($deliveryTimeInformation);
+
+    var_dump($rate->shopRatesTimeInTransit($shipment));
+} catch (Exception $e) {
+    var_dump($e);
+}
+```
+<a name="ratetimeintransit-class-parameters"></a>
+### Parameters
+
+ * `rateRequest` Mandatory. rateRequest Object with shipment details
+
+This RateTimeInTransit extends the Rate class which is not finished yet! Parameter should be added when it will be finished.
+
 <a name="timeintransit-class"></a>
 ## TimeInTransit Class
 
@@ -503,7 +580,7 @@ The Tradeability class allows you to get data for international shipments:
 
 Note: only the Landed Costs API is currently implemented.
 
-WARNING: Tradeability is only available through a SOAP API. Therefore you are required to have the [SOAP extension](http://php.net/manual/en/book.soap.php) installed on your system.
+⚠️ Tradeability is only available through a SOAP API. Therefore you are required to have the [SOAP extension](http://php.net/manual/en/book.soap.php) installed on your system.
 
 <a name="tradeability-class-example"></a>
 ### Example
@@ -577,7 +654,7 @@ For the Landed Cost call, parameters are:
  * `landedCostRequest` Mandatory. landedCostRequest object with request details, see example.
 
 <a name="shipping-class"></a>
-## Shipping Class.
+## Shipping Class
 
 The Shipping class allows you to register shipments. This also includes return shipments.
 
@@ -588,148 +665,165 @@ The shipping flow consists of 2 steps:
 
 Please note this is just an example. Your use case might demand more or less information to be sent to UPS.
 
-In the example $return is used to show how a return could be handled. 
+In the example `$return` is used to show how a return could be handled. 
 
 <a name="shipping-class-example"></a>
 ### Example
 
 ```php
-    // Start shipment
-    $shipment = new Ups\Entity\Shipment;
+// Start shipment
+$shipment = new Ups\Entity\Shipment;
 
-    // Set shipper
-    $shipper = $shipment->getShipper();
-    $shipper->setShipperNumber('XX');
-    $shipper->setName('XX');
-    $shipper->setAttentionName('XX');
-    $shipperAddress = $shipper->getAddress();
-    $shipperAddress->setAddressLine1('XX');
-    $shipperAddress->setPostalCode('XX');
-    $shipperAddress->setCity('XX');
-    $shipperAddress->setCountryCode('XX');
-    $shipper->setAddress($shipperAddress);
-    $shipper->setEmailAddress('XX'); 
-    $shipper->setPhoneNumber('XX');
-    $shipment->setShipper($shipper);
+// Set shipper
+$shipper = $shipment->getShipper();
+$shipper->setShipperNumber('XX');
+$shipper->setName('XX');
+$shipper->setAttentionName('XX');
+$shipperAddress = $shipper->getAddress();
+$shipperAddress->setAddressLine1('XX');
+$shipperAddress->setPostalCode('XX');
+$shipperAddress->setCity('XX');
+$shipperAddress->setStateProvinceCode('XX'); // required in US
+$shipperAddress->setCountryCode('XX');
+$shipper->setAddress($shipperAddress);
+$shipper->setEmailAddress('XX'); 
+$shipper->setPhoneNumber('XX');
+$shipment->setShipper($shipper);
 
-    // To address
-    $address = new \Ups\Entity\Address();
-    $address->setAddressLine1('XX');
-    $address->setPostalCode('XX');
-    $address->setCity('XX');
-    $address->setCountryCode('XX');
-    $shipTo = new \Ups\Entity\ShipTo();
-    $shipTo->setAddress($address);
-    $shipTo->setCompanyName('XX');
-    $shipTo->setAttentionName('XX');
-    $shipTo->setEmailAddress('XX'); 
-    $shipTo->setPhoneNumber('XX');
-    $shipment->setShipTo($shipTo);
+// To address
+$address = new \Ups\Entity\Address();
+$address->setAddressLine1('XX');
+$address->setPostalCode('XX');
+$address->setCity('XX');
+$address->setStateProvinceCode('XX');  // Required in US
+$address->setCountryCode('XX');
+$shipTo = new \Ups\Entity\ShipTo();
+$shipTo->setAddress($address);
+$shipTo->setCompanyName('XX');
+$shipTo->setAttentionName('XX');
+$shipTo->setEmailAddress('XX'); 
+$shipTo->setPhoneNumber('XX');
+$shipment->setShipTo($shipTo);
 
-    // From address
-    $address = new \Ups\Entity\Address();
-    $address->setAddressLine1('XX');
-    $address->setPostalCode('XX');
-    $address->setCity('XX');
-    $address->setCountryCode('XX');
-    $address->setStateProvinceCode('XX');
-    $shipFrom = new \Ups\Entity\ShipFrom();
-    $shipFrom->setAddress($address);
-    $shipFrom->setName('XX');
-    $shipFrom->setAttentionName($shipFrom->getName());
-    $shipFrom->setCompanyName($shipFrom->getName());
-    $shipFrom->setEmailAddress('XX');
-    $shipFrom->setPhoneNumber('XX');
-    $shipment->setShipFrom($shipFrom);
+// From address
+$address = new \Ups\Entity\Address();
+$address->setAddressLine1('XX');
+$address->setPostalCode('XX');
+$address->setCity('XX');
+$address->setStateProvinceCode('XX');  
+$address->setCountryCode('XX');
+$shipFrom = new \Ups\Entity\ShipFrom();
+$shipFrom->setAddress($address);
+$shipFrom->setName('XX');
+$shipFrom->setAttentionName($shipFrom->getName());
+$shipFrom->setCompanyName($shipFrom->getName());
+$shipFrom->setEmailAddress('XX');
+$shipFrom->setPhoneNumber('XX');
+$shipment->setShipFrom($shipFrom);
 
-    // Sold to
-    $address = new \Ups\Entity\Address();
-    $address->setAddressLine1('XX');
-    $address->setPostalCode('XX');
-    $address->setCity('XX');
-    $address->setCountryCode('XX');
-    $address->setStateProvinceCode('XX');
-    $soldTo = new \Ups\Entity\SoldTo;
-    $soldTo->setAddress($address);
-    $soldTo->setAttentionName('XX');
-    $soldTo->setCompanyName($soldTo->getAttentionName());
-    $soldTo->setEmailAddress('XX');
-    $soldTo->setPhoneNumber('XX');
-    $shipment->setSoldTo($soldTo);
+// Sold to
+$address = new \Ups\Entity\Address();
+$address->setAddressLine1('XX');
+$address->setPostalCode('XX');
+$address->setCity('XX');
+$address->setCountryCode('XX');
+$address->setStateProvinceCode('XX');
+$soldTo = new \Ups\Entity\SoldTo;
+$soldTo->setAddress($address);
+$soldTo->setAttentionName('XX');
+$soldTo->setCompanyName($soldTo->getAttentionName());
+$soldTo->setEmailAddress('XX');
+$soldTo->setPhoneNumber('XX');
+$shipment->setSoldTo($soldTo);
 
-    // Set service
-    $service = new \Ups\Entity\Service;
-    $service->setCode(\Ups\Entity\Service::S_STANDARD);
-    $service->setDescription($service->getName());
-    $shipment->setService($service);
+// Set service
+$service = new \Ups\Entity\Service;
+$service->setCode(\Ups\Entity\Service::S_STANDARD);
+$service->setDescription($service->getName());
+$shipment->setService($service);
 
-    // Mark as a return (if return)
-    if ($return) {
-        $returnService = new \Ups\Entity\ReturnService;
-        $returnService->setCode(\Ups\Entity\ReturnService::PRINT_RETURN_LABEL_PRL);
-        $shipment->setReturnService($returnService);
-    }
+// Mark as a return (if return)
+if ($return) {
+    $returnService = new \Ups\Entity\ReturnService;
+    $returnService->setCode(\Ups\Entity\ReturnService::PRINT_RETURN_LABEL_PRL);
+    $shipment->setReturnService($returnService);
+}
 
-    // Set description
-    $shipment->setDescription('XX');
+// Set description
+$shipment->setDescription('XX');
 
-    // Add Package
-    $package = new \Ups\Entity\Package();
-    $package->getPackagingType()->setCode(\Ups\Entity\PackagingType::PT_PACKAGE);
-    $package->getPackageWeight()->setWeight(10);
-    $unit = new \Ups\Entity\UnitOfMeasurement;
-    $unit->setCode(\Ups\Entity\UnitOfMeasurement::UOM_KGS);
-    $package->getPackageWeight()->setUnitOfMeasurement($unit);
+// Add Package
+$package = new \Ups\Entity\Package();
+$package->getPackagingType()->setCode(\Ups\Entity\PackagingType::PT_PACKAGE);
+$package->getPackageWeight()->setWeight(10);
+$unit = new \Ups\Entity\UnitOfMeasurement;
+$unit->setCode(\Ups\Entity\UnitOfMeasurement::UOM_KGS);
+$package->getPackageWeight()->setUnitOfMeasurement($unit);
 
-    // Set dimensions
-    $dimensions = new \Ups\Entity\Dimensions();
-    $dimensions->setHeight(50);
-    $dimensions->setWidth(50);
-    $dimensions->setLength(50);
-    $unit = new \Ups\Entity\UnitOfMeasurement;
-    $unit->setCode(\Ups\Entity\UnitOfMeasurement::UOM_CM);
-    $dimensions->setUnitOfMeasurement($unit);
-    $package->setDimensions($dimensions);
+// Set Package Service Options
+$packageServiceOptions = new \Ups\Entity\PackageServiceOptions();
+$packageServiceOptions->setShipperReleaseIndicator(true);
+$package->setPackageServiceOptions($packageServiceOptions);
 
-    // Add descriptions because it is a package
-    $package->setDescription('XX');
+// Set dimensions
+$dimensions = new \Ups\Entity\Dimensions();
+$dimensions->setHeight(50);
+$dimensions->setWidth(50);
+$dimensions->setLength(50);
+$unit = new \Ups\Entity\UnitOfMeasurement;
+$unit->setCode(\Ups\Entity\UnitOfMeasurement::UOM_CM);
+$dimensions->setUnitOfMeasurement($unit);
+$package->setDimensions($dimensions);
 
-    // Add this package
-    $shipment->addPackage($package);
+// Add descriptions because it is a package
+$package->setDescription('XX');
 
-    // Set Reference Number
-    $referenceNumber = new \Ups\Entity\ReferenceNumber;
-    if ($return) {
-        $referenceNumber->setCode(\Ups\Entity\ReferenceNumber::CODE_RETURN_AUTHORIZATION_NUMBER);
-        $referenceNumber->setValue($return_id);
-    } else {
-        $referenceNumber->setCode(\Ups\Entity\ReferenceNumber::CODE_INVOICE_NUMBER);
-        $referenceNumber->setValue($order_id);
-    }
-    $shipment->setReferenceNumber($referenceNumber);
+// Add this package
+$shipment->addPackage($package);
 
-    // Set payment information
-    $shipment->setPaymentInformation(new \Ups\Entity\PaymentInformation('prepaid', (object)array('AccountNumber' => 'XX')));
+// Set Reference Number
+$referenceNumber = new \Ups\Entity\ReferenceNumber;
+if ($return) {
+    $referenceNumber->setCode(\Ups\Entity\ReferenceNumber::CODE_RETURN_AUTHORIZATION_NUMBER);
+    $referenceNumber->setValue($return_id);
+} else {
+    $referenceNumber->setCode(\Ups\Entity\ReferenceNumber::CODE_INVOICE_NUMBER);
+    $referenceNumber->setValue($order_id);
+}
+$shipment->setReferenceNumber($referenceNumber);
 
-    // Ask for negotiated rates (optional)
-    $rateInformation = new \Ups\Entity\RateInformation;
-    $rateInformation->setNegotiatedRatesIndicator(1);
-    $shipment->setRateInformation($rateInformation);
+// Set payment information
+$shipment->setPaymentInformation(new \Ups\Entity\PaymentInformation('prepaid', (object)array('AccountNumber' => 'XX')));
 
-    // Get shipment info
-    try {
-        $api = new Ups\Shipping($accessKey, $userId, $password); 
+// Ask for negotiated rates (optional)
+$rateInformation = new \Ups\Entity\RateInformation;
+$rateInformation->setNegotiatedRatesIndicator(1);
+$shipment->setRateInformation($rateInformation);
+
+// Get shipment info
+try {
+    $api = new Ups\Shipping($accessKey, $userId, $password); 
+
+    $confirm = $api->confirm(\Ups\Shipping::REQ_VALIDATE, $shipment);
+    var_dump($confirm); // Confirm holds the digest you need to accept the result
     
-        $confirm = $api->confirm(\Ups\Shipping::REQ_VALIDATE, $shipment);
-        var_dump($confirm); // Confirm holds the digest you need to accept the result
-        
-        if ($confirm) {
-            $accept = $api->accept($confirm->ShipmentDigest);
-            var_dump($accept); // Accept holds the label and additional information
-        }
-    } catch (\Exception $e) {
-        var_dump($e);
+    if ($confirm) {
+        $accept = $api->accept($confirm->ShipmentDigest);
+        var_dump($accept); // Accept holds the label and additional information
     }
+} catch (\Exception $e) {
+    var_dump($e);
+}
+```
+
+If you wanted to create a printable file from the UPS Shipping label image data that came back with $accept, you would use something like the following: 
+
+```php
+$label_file = $order_id . ".gif"; 
+$base64_string = $accept->PackageResults->LabelImage->GraphicImage;
+$ifp = fopen($label_file, 'wb');
+fwrite($ifp, base64_decode($base64_string));
+fclose($ifp);
 ```
 
 <a name="shipping-class-parameters"></a>
@@ -757,7 +851,7 @@ Requests & responses (including XML, no access keys) are logged at DEBUG level. 
 
 ### Example using [Monolog](https://github.com/Seldaek/monolog)
 
-````
+````php
 // Create logger
 $log = new \Monolog\Logger('ups');
 $log->pushHandler(new \Monolog\Handler\StreamHandler('logs/ups.log', \Monolog\Logger::DEBUG));

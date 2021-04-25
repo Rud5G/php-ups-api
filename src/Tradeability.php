@@ -69,8 +69,10 @@ class Tradeability extends Ups
     {
         $request = $this->createRequestLandedCost($request);
         $response = $this->sendRequest(
-            $request, self::ENDPOINT_LANDEDCOST,
-            'ProcessLCRequest', 'LandedCost'
+            $request,
+            self::ENDPOINT_LANDEDCOST,
+            'ProcessLCRequest',
+            'LandedCost'
         );
 
         if (isset($response->LandedCostResponse->QueryResponse)) {
@@ -112,20 +114,24 @@ class Tradeability extends Ups
     /**
      * Creates and sends a request for the given data. Most errors are handled in SoapRequest
      *
-     * @param $request
-     * @param $endpoint
-     * @param $operation
-     * @param $wsdl
+     * @param string $request
+     * @param string $endpoint
+     * @param string $operation
+     * @param string $wsdl
      *
      * @throws Exception
      *
-     * @return TimeInTransitRequest
+     * @return \stdClass
      */
     private function sendRequest($request, $endpoint, $operation, $wsdl)
     {
         $endpointurl = $this->compileEndpointUrl($endpoint);
         $this->response = $this->getRequest()->request(
-            $this->createAccess(), $request, $endpointurl, $operation, $wsdl
+            $this->createAccess(),
+            $request,
+            $endpointurl,
+            $operation,
+            $wsdl
         );
         $response = $this->response->getResponse();
 

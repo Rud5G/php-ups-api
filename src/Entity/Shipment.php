@@ -10,6 +10,11 @@ class Shipment
     private $paymentInformation;
 
     /**
+     * @var ItemizedPaymentInformation
+     */
+    private $itemizedPaymentInformation;
+
+    /**
      * @var RateInformation
      */
     private $rateInformation;
@@ -73,7 +78,7 @@ class Shipment
      * @var ReferenceNumber
      */
     private $referenceNumber;
-    
+
     /**
      * @var ReferenceNumber
      */
@@ -100,9 +105,23 @@ class Shipment
     private $invoiceLineTotal;
 
     /**
+     * @var ShipmentTotalWeight
+     */
+    private $shipmentTotalWeight;
+
+    /**
      * @var string
      */
     private $numOfPiecesInShipment;
+
+    /**
+     * @var DeliveryTimeInformation
+     */
+    private $deliveryTimeInformation;
+    /**
+     * @var bool
+     */
+    private $taxInformationIndicator;
 
     public function __construct()
     {
@@ -111,6 +130,7 @@ class Shipment
         $this->setShipmentServiceOptions(new ShipmentServiceOptions());
         $this->setService(new Service());
         $this->rateInformation = null;
+        $this->taxInformationIndicator = false;
     }
 
     /**
@@ -190,7 +210,7 @@ class Shipment
 
         return $this;
     }
-    
+
     /**
      * @param ReferenceNumber $referenceNumber
      *
@@ -210,7 +230,7 @@ class Shipment
     {
         return $this->referenceNumber;
     }
-    
+
     /**
      * @return ReferenceNumber
      */
@@ -420,6 +440,26 @@ class Shipment
     }
 
     /**
+     * @return ItemizedPaymentInformation
+     */
+    public function getItemizedPaymentInformation()
+    {
+        return $this->itemizedPaymentInformation;
+    }
+
+    /**
+     * @param ItemizedPaymentInformation $itemizedPaymentInformation
+     *
+     * @return Shipment
+     */
+    public function setItemizedPaymentInformation(ItemizedPaymentInformation $itemizedPaymentInformation)
+    {
+        $this->itemizedPaymentInformation = $itemizedPaymentInformation;
+
+        return $this;
+    }
+
+    /**
      * If called, returned prices will include negotiated rates (discounts will be applied).
      */
     public function showNegotiatedRates()
@@ -521,6 +561,53 @@ class Shipment
     {
         $this->numOfPiecesInShipment = $numOfPiecesInShipment;
 
+        return $this;
+    }
+
+    /**
+     * @return DeliveryTimeInformation
+     */
+    public function getDeliveryTimeInformation()
+    {
+        return $this->deliveryTimeInformation;
+    }
+
+    /**
+     * @param DeliveryTimeInformation $deliveryTimeInformation
+     */
+    public function setDeliveryTimeInformation(DeliveryTimeInformation $deliveryTimeInformation)
+    {
+        $this->deliveryTimeInformation = $deliveryTimeInformation;
+    }
+
+    /**
+     * @return ShipmentTotalWeight
+     */
+    public function getShipmentTotalWeight()
+    {
+        return $this->shipmentTotalWeight;
+    }
+
+    /**
+     * @param ShipmentTotalWeight $shipmentTotalWeight
+     */
+    public function setShipmentTotalWeight(ShipmentTotalWeight $shipmentTotalWeight)
+    {
+        $this->shipmentTotalWeight = $shipmentTotalWeight;
+    }
+
+    public function getTaxInformationIndicator(): bool
+    {
+        return $this->taxInformationIndicator;
+    }
+
+    /**
+     * If called, returned prices will include Tax Information
+     */
+    public function setTaxInformationIndicator(bool $taxInformationIndicator): self
+    {
+        $this->taxInformationIndicator = $taxInformationIndicator;
+        
         return $this;
     }
 }

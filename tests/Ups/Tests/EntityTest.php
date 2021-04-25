@@ -1,6 +1,6 @@
 <?php namespace Ups\Tests;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Ups\NodeInterface;
 
 /**
@@ -9,7 +9,7 @@ use Ups\NodeInterface;
  * Class EntityTest
  * @package Ups\Tests
  */
-class EntityTest extends PHPUnit_Framework_TestCase
+class EntityTest extends TestCase
 {
 
     /**
@@ -21,6 +21,7 @@ class EntityTest extends PHPUnit_Framework_TestCase
         'AddressValidationResponse',
         'AddressValidation\AVAddress',
         'AddressValidation\AddressClassification',
+        'LabelDelivery'
     ];
 
     /**
@@ -56,7 +57,6 @@ class EntityTest extends PHPUnit_Framework_TestCase
         'SubscriptionEvents',
         'QuantumViewEvents',
         'SubscriptionStatus',
-        'LabelDelivery',
         'QuantumViewResponse',
         'TimeInTransitRequest',
         'CallTagARS',
